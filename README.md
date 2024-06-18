@@ -41,7 +41,7 @@ Alat yang diperlukan :
 
 ### Setup Hardware
 Hal pertama yang harus dilakukan adalah melakukan setup hardware. Sebelumnya buat gambaran rangkaiannya secara digital agar memudahkan pemasangan hardware
-# gambar
+<img src="img/1.png">
 Siapkan alat alat yang telah disebutkan diatas seperti esp32, dht22, bread board, kabel jumper, gunakan kabel jumper untuk menghubungkan dht22 dengan esp32, dengan mapping kabel seperti dibawah 
 | Pin DHT22 | Koneksi ke ESP32 |
 |-----------|------------------|
@@ -50,7 +50,7 @@ Siapkan alat alat yang telah disebutkan diatas seperti esp32, dht22, bread board
 | VCC (+)   | 3.3v             |
 
 Berikut hasil pemasangan hardware sesuai dengan mapping kabel diatas
-# gambar
+<img src="img/2.png">
 
 ### Setup Program dan Arduino IDE
 - ```a. Instalasi Library:``` Pertama, pastikan untuk menginstal library yang dibutuhkan, seperti library untuk sensor DHT22 dan library PubSubClient. Library PubSubClient memungkinkan komunikasi dengan broker MQTT untuk melakukan publish dan subscribe pesan.
@@ -61,7 +61,7 @@ Berikut hasil pemasangan hardware sesuai dengan mapping kabel diatas
   - Otorisasi: Sertakan username dan password jika broker MQTT Anda memerlukan autentikasi.
   - Pin yang Digunakan: Sesuaikan dengan pin pada NodeMCU yang terhubung ke sensor DHT22.
 - ```c. Unggah Program:``` Setelah melakukan konfigurasi, unggah program ke ESP32.
-# gambar
+<img src="img/3.png">
 
 ### Testing Koneksi dengan MQTT.run
 #### Memantau output dari ESP 32 melalui website mqtt.run. Berikut langkah langkah nya:
@@ -80,7 +80,7 @@ Berikut hasil pemasangan hardware sesuai dengan mapping kabel diatas
   - Username dan Password: Menambahkan informasi autentikasi dengan broker MQTT 
 - ```Menampilkan Data di Dashboard:```
   - Setelah melakukan penyesuaian, buka file HTML di browser. Jika konfigurasi sudah benar, dashboard HTML akan menampilkan data dari sensor DHT22 secara real-time. Hasilnya akan mirip dengan gambar di bawah ini, yang menunjukkan informasi yang diperoleh dari sensor.
-# gambar
+<img src="img/4.png">
 
 ---
 
@@ -98,7 +98,7 @@ Alat yang diperlukan:
 
 ### Setup Hardware
 Hal pertama yang harus dilakukan adalah melakukan setup hardware. Sebelumnya buat gambaran rangkaiannya secara digital agar memudahkan pemasangan hardware
-# gambar 
+<img src="img/5.png">
 Siapkan alat alat yang telah disebutkan diatas seperti raspberry pi, LED, kabel jumper, gunakan kabel jumper untuk menghubungkan Raspberry pi dengan LED, dengan mapping kabel seperti di bawah 
 | Pin Lampu LED | Koneksi ke Raspberry Pi |
 |---------------|-------------------------|
@@ -106,47 +106,83 @@ Siapkan alat alat yang telah disebutkan diatas seperti raspberry pi, LED, kabel 
 | Anoda         | D1                      |
 
 Berikut hasil pemasangan hardware sesuai dengan mapping kabel diatas:
-# gambar 
+<img src="img/6.png">
 
 ### Setup Program LED Blink
 - ```Penyiapan LED:```
   - Menghubungkan LED ke Raspberry pi menggunakan kabel jumper dan menggunakan pin GPIO yang sama dengan yang digunakan dalam udemy, yaitu pin GPIO D1.
 - ```Validasi Pengaturan:```
   - Setelah pemasangan selesai, ketika suhu terdeteksi oleh sensor DHT22, program akan mengaktifkan atau mematikan LED sesuai dengan logika yang telah diatur. LED akan memberikan umpan balik visual bahwa sensor berfungsi dan mendeteksi suhu.
-# gambar
+<img src="img/7.png">
 
 ### Setup Mosquitto
 - ```Instalasi Paho-MQTT:```
   - Pastikan library Paho-MQTT terinstal, yang diperlukan untuk mengelola komunikasi MQTT pip install paho-mqtt
 - ```Menentukan Topik untuk Subscribe:```
   - Menetapkan topik yang akan di-subscribe oleh client di dalam fungsi on_connect. Kami menggunakan topik /labkcks/room/led.
-# gambar
+```
+def on_connect(client, userdata, flags, rc):
+client.subscribe("/lab-kcks/room/led")
+```
 
 ### Pengaturan Username dan Password
 Gunakan fungsi client.username_pw_set untuk Mengatur username dan password pada fungsi client.username_pw_set. 
-# gambar
+```
+client.username_pw_set(username="admin",password="kcks1029")
+```
 
 ### Koneksi ke Broker MQTT
 Melakukan Konfigurasi koneksi broker, termasuk IP address, port, dan waktu looping dalam detik. Copy code
-# gambar 
+```
+client.connect("152.42.194.14", 1883, 60)
+```
 
 ### Setup Web App untuk Mengontrol LED
 - Ambil source code webpage dari resource course project 2 dan lakukan penyesuaian pada pengaturan MQTT. Pastikan bahwa setting MQTT pada halaman web sesuai dengan pengaturan yang telah digunakan dalam file mqtt_sub.py. Ini termasuk memastikan IP broker, port, dan topik sudah sesuai.
-# gambar 
-
+```
+Server="152.42.194.14";
+Port="9000";
+Topic="/lab-kcks/room/temperature";
+MQTTUserName="admin";
+MQTTPassword="kcks1029";
+```
 - Menambahkan button pada web app
-# gambar
+```
+$("#btnLed").click(function(){
+if($("#btnLed").text()=="On"){
+console.log("On");
+$("#btnLed").text("Off");
+TurnOnOffLed("On");
+}else{
+console.log("Off");
+$("#btnLed").text("On");
+TurnOnOffLed("Off");
+}
+});
+```
 
 - Menambahkan fungsi agar button yang telah dibuat sebelumnya bisa terhubung dengan MQTT
-# gambar
+```
+function TurnOnOffLed(Signal){
+if(Connected){
+if(Signal=="On"){
+message = new Paho.MQTT.Message("On");
+}else{
+message = new Paho.MQTT.Message("Off");
+}
+message.destinationName = LedTopic;
+client.send(message);
+}
+}
+```
 
 - Setelah menambahkan button pada html maka tampilan web app akan berubah menjadi seperti ini:
-# gambar
+<img src="img/8.png">
 
 ## ```Komunikasi M2M Antara ESP32 dan Raspberry pi```
 - Ketika suhu yang diambil dari sensor DHT 22 pada ESP32 berada diatas 30 derajat
-# gambar 
-# gambar 
+<img src="img/2.png">
+<img src="img/4.png">
 
 - Maka lampu LED pada Raspberry pi akan menyala
-# gambar
+<img src="img/6.png">
